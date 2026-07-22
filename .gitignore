@@ -1,0 +1,7 @@
+input.txt
+output.txt
+PeTTa/output.txt
+*.log
+.vscode/
+.metta_history
+.prolog_history
