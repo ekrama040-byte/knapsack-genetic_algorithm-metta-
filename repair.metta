@@ -1,46 +1,19 @@
 ;; ============================================================================
-;; CLEAR FIRST SELECTED GENE
+;; CLEAR FIRST ACTIVE BIT OPERATOR (Strict Cons/Nil Alignment)
 ;; ============================================================================
+(= (clear-first Nil) Nil)
+(= (clear-first (Cons 1 $rest)) (Cons 0 $rest))
+(= (clear-first (Cons 0 $rest)) (Cons 0 (clear-first $rest)))
 
-;; Empty chromosome
+;; ============================================================================
+;; RECURSIVE KNAPSACK REPAIR ENGINE (Let-Free & Non-Freezing)
+;; ============================================================================
+(= (repair Nil $items $capacity) Nil)
+(= (repair $chromosome $items $capacity)
+   (evaluate-and-repair $chromosome (calculate-total $chromosome $items) $items $capacity))
 
-(= (clear-first ())
-   ())
-
-;; First selected gene -> change 1 to 0 and stop
-
-(= (clear-first
-      (cons 1 $rest))
-
-   (cons 0 $rest))
-
-;; First gene already 0 -> keep it and continue
-
-(= (clear-first
-      (cons 0 $rest))
-
-   (cons
-      0
-      (clear-first $rest)))
-(= (repair-once
-      $chromosome
-      $capacity
-      (cons $weight $value))
-
-   (if
-      (<= $weight $capacity)
-
-      $chromosome
-
-      (clear-first $chromosome)))
-    
-!(clear-first
-   (1 1 1 1 1))
-!(repair-once
-   (1 1 1 1 1)
-   10
-   (18 59))
-!(repair-once
-   (0 1 1 1 1)
-   10
-   (14 58))
+;; Helper: Performs weight bounding check using pure functional matching
+(= (evaluate-and-repair $chromosome (Totals $total-w $total-v) $items $capacity)
+   (if (<= $total-w $capacity)
+       $chromosome                              
+       (repair (clear-first $chromosome) $items $capacity)))

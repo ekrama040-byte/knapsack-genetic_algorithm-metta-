@@ -1,26 +1,12 @@
-(= (evaluate-population
-      ()
-      $items
-      $capacity)
+;; ============================================================================
+;; POPULATION EVALUATION CORE (NATIVE PeTTa LIST SYNTAX)
+;; ============================================================================
 
-   ())
+;; Base case: An empty population returns Nil
+(= (evaluate-population Nil $items $capacity)
+   Nil)
 
-
-(= (evaluate-population
-      (cons $x $rest)
-      $items
-      $capacity)
-
-   (cons
-
-      (cons
-         $x
-         (fitness
-            $x
-            $items
-            $capacity))
-
-      (evaluate-population
-         $rest
-         $items
-         $capacity)))
+;; Recursive case: Evaluates each chromosome string using structural uppercase Cons
+(= (evaluate-population (Cons $x $rest) $items $capacity)
+   (Cons (Cons $x (fitness $x $items $capacity))
+         (evaluate-population $rest $items $capacity)))

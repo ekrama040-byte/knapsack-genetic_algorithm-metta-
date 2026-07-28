@@ -1,100 +1,29 @@
 ;; ============================================================================
-;; FITNESS EVALUATION
+;; DYNAMIC WEIGHT ACCUMULATION (Pure Flat Integers)
 ;; ============================================================================
+(= (calculate-weight Nil Nil) 0)
 
+(= (calculate-weight (Cons 0 $genes) (Cons (Item $weight $value) $items))
+   (calculate-weight $genes $items))
 
-;; Empty case
+(= (calculate-weight (Cons 1 $genes) (Cons (Item $weight $value) $items))
+   (+ $weight (calculate-weight $genes $items)))
 
-(= (calculate-total () ())
-   (0 0))
-
-
-;; Gene 0: skip item
-
-(= (calculate-total
-      (cons 0 $genes)
-      (cons $item $items))
-
-   (calculate-total
-      $genes
-      $items))
-
-
-;; Gene 1: add item weight/value
-
-(= (calculate-total
-      (cons 1 $genes)
-      (cons (cons $weight $value) $items))
-
-   (add-total
-      (calculate-total $genes $items)
-      $weight
-      $value))
-
-
-;; Add values
-
-(= (add-total
-      (cons $old-weight $old-value)
-      $weight
-      $value)
-
-   (cons
-      (+ $old-weight $weight)
-      (+ $old-value $value)))
-    
 ;; ============================================================================
-;; FITNESS FUNCTION
+;; DYNAMIC VALUE ACCUMULATION (Pure Flat Integers)
 ;; ============================================================================
+(= (calculate-value Nil Nil) 0)
 
+(= (calculate-value (Cons 0 $genes) (Cons (Item $weight $value) $items))
+   (calculate-value $genes $items))
 
-;; Feasible solution
-;; weight <= capacity
-;; return value
+(= (calculate-value (Cons 1 $genes) (Cons (Item $weight $value) $items))
+   (+ $value (calculate-value $genes $items)))
 
-(= (fitness
-      $chromosome
-      $items
-      $capacity)
-
-   (check-fitness
-      (calculate-total
-         $chromosome
-         $items)
-      $capacity))
-
-
-;; Valid solution
-
-(= (check-fitness
-      (cons $weight $value)
-      $capacity)
-
-   (if
-      (<= $weight $capacity)
-      $value
-      0))
-!(calculate-total
-   (1 0 1 1 0)
-   ((4 1)
-    (7 7)
-    (1 22)
-    (3 23)
-    (3 6)))
-
-!(fitness
-   (1 0 1 1 0)
-   ((4 1)
-    (7 7)
-    (1 22)
-    (3 23)
-    (3 6))
-   20)
-!(fitness
-   (1 1 1 1 1)
-   ((4 1)
-    (7 7)
-    (1 22)
-    (3 23)
-    (3 6))
-   10)
+;; ============================================================================
+;; PUBLIC FITNESS FUNCTION ENGINE
+;; ============================================================================
+(= (fitness $chromosome $items $capacity)
+   (if (> (calculate-weight $chromosome $items) $capacity)
+       0 
+       (calculate-value $chromosome $items)))

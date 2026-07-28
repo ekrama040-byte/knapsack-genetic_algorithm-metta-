@@ -1,7 +1,26 @@
-input.txt
+# === Python Cache & Virtual Environments ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+ENV/
+
+# === MeTTa Runtime Logs & Output Files ===
 output.txt
 PeTTa/output.txt
 *.log
+
+# === Prolog Compiled Artifacts ===
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+mork_ffi/target/
+
+# === VS Code Project Workspace Workspace Metadata ===
 .vscode/
-.metta_history
-.prolog_history
+.history/
+*.code-workspace

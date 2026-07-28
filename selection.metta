@@ -1,157 +1,33 @@
-;; ==========================================
-;; REMOVE ELEMENT
-;; ==========================================
+;; ============================================================================
+;; COMPARISON & TOURNAMENT MECHANICS (Strict Cons/Nil Alignment)
+;; ============================================================================
 
+;; Pits two raw chromosomes against each other and extracts the superior configuration
+(= (tournament $a $b $items $capacity)
+   ;; FIXED: Completely removed let blocks to avoid any variable binding loops
+   (if (> (fitness $a $items $capacity) (fitness $b $items $capacity)) 
+       $a 
+       $b))
 
-(= (remove-chromosome
-      $x
-      ())
+;; Runs tournament bracket selection across structured chromosome pairs
+(= (tournament-selection Nil $items $capacity) 
+   Nil)
 
-   ())
+(= (tournament-selection (Cons $x Nil) $items $capacity) 
+   (Cons $x Nil))
 
+(= (tournament-selection (Cons $x (Cons $y $rest)) $items $capacity)
+   (Cons (tournament $x $y $items $capacity)
+         (tournament-selection $rest $items $capacity)))
 
-(= (remove-chromosome
-      $x
-      (cons $x $rest))
+;; ============================================================================
+;; PUBLIC INTERFACE ENGINE (Iterative Pool Champion Selection)
+;; ============================================================================
 
-   $rest)
+;; Master Entry Point: Requested explicitly by main.metta pipeline
+(= (select-best-of-pool Nil $items $capacity) Nil)
+(= (select-best-of-pool (Cons $chrom Nil) $items $capacity) $chrom)
 
-
-(= (remove-chromosome
-      $x
-      (cons $y $rest))
-
-   (cons
-      $y
-      (remove-chromosome
-         $x
-         $rest)))
-
-
-
-;; ==========================================
-;; COMPARE TWO CHROMOSOMES
-;; ==========================================
-
-
-(= (better
-      $a
-      $b
-      $items
-      $capacity)
-
-   (compare
-      $a
-      $b
-      (fitness $a $items $capacity)
-      (fitness $b $items $capacity)))
-
-
-(= (compare
-      $a
-      $b
-      $fa
-      $fb)
-
-   (if
-      (> $fa $fb)
-      $a
-      $b))
-
-
-
-;; ==========================================
-;; TOURNAMENT
-;; ==========================================
-
-
-(= (tournament
-      $a
-      $b
-      $items
-      $capacity)
-
-   (better
-      $a
-      $b
-      $items
-      $capacity))
-
-
-
-;; ==========================================
-;; APPLY TO POPULATION PAIRS
-;; ==========================================
-
-
-(= (tournament-selection
-      ()
-      $items
-      $capacity)
-
-   ())
-
-
-(= (tournament-selection
-      (cons $x ())
-      $items
-      $capacity)
-
-   (cons
-      $x
-      ()))
-
-
-(= (tournament-selection
-      (cons $x
-            (cons $y $rest))
-      $items
-      $capacity)
-
-   (cons
-
-      (tournament
-         $x
-         $y
-         $items
-         $capacity)
-
-      (tournament-selection
-         $rest
-         $items
-         $capacity)))
-
-
-
-;; ==========================================
-;; SELECT PARENTS
-;; ==========================================
-
-
-(= (select-parents
-      $population
-      $items
-      $capacity)
-
-   (take-two
-      (tournament-selection
-         $population
-         $items
-         $capacity)))
-
-
-
-;; ==========================================
-;; TAKE TWO WINNERS
-;; ==========================================
-
-
-(= (take-two
-      (cons $x
-            (cons $y $rest)))
-
-   (cons
-      $x
-      (cons
-         $y
-         ())))
+;; FIXED: Inlined directly without let blocks to bypass the transpiler bug
+(= (select-best-of-pool $pool $items $capacity)
+   (select-best-of-pool (tournament-selection $pool $items $capacity) $items $capacity))
