@@ -1,33 +1,14 @@
-;; ============================================================================
-;; COMPARISON & TOURNAMENT MECHANICS (Strict Cons/Nil Alignment)
-;; ============================================================================
+;; Base cases: If empty or 1 left, return what remains
+(= (select-winners-pool Nil $items) Nil)
+(= (select-winners-pool (Cons $c Nil) $items) (Cons $c Nil))
 
-;; Pits two raw chromosomes against each other and extracts the superior configuration
-(= (tournament $a $b $items $capacity)
-   ;; FIXED: Completely removed let blocks to avoid any variable binding loops
-   (if (> (fitness $a $items $capacity) (fitness $b $items $capacity)) 
-       $a 
-       $b))
+;; Processes pairs independently, keeping BOTH winners in a list
+(= (select-winners-pool (Cons $c1 (Cons $c2 $rest)) $items)
+   (build-winners-list (if (> (calculate-value $c1 $items) (calculate-value $c2 $items)) $c1 $c2)
+                       (select-winners-pool $rest $items)))
 
-;; Runs tournament bracket selection across structured chromosome pairs
-(= (tournament-selection Nil $items $capacity) 
-   Nil)
+;; Helper to prepend the winner to the rest of the winning pool
+(= (build-winners-list $winner $rest-winners)
+   (Cons $winner $rest-winners))
 
-(= (tournament-selection (Cons $x Nil) $items $capacity) 
-   (Cons $x Nil))
 
-(= (tournament-selection (Cons $x (Cons $y $rest)) $items $capacity)
-   (Cons (tournament $x $y $items $capacity)
-         (tournament-selection $rest $items $capacity)))
-
-;; ============================================================================
-;; PUBLIC INTERFACE ENGINE (Iterative Pool Champion Selection)
-;; ============================================================================
-
-;; Master Entry Point: Requested explicitly by main.metta pipeline
-(= (select-best-of-pool Nil $items $capacity) Nil)
-(= (select-best-of-pool (Cons $chrom Nil) $items $capacity) $chrom)
-
-;; FIXED: Inlined directly without let blocks to bypass the transpiler bug
-(= (select-best-of-pool $pool $items $capacity)
-   (select-best-of-pool (tournament-selection $pool $items $capacity) $items $capacity))

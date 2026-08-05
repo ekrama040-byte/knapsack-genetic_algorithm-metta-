@@ -29,8 +29,7 @@ cd PeTTa
 # Step 1: Run the main genetic algorithm pipeline to process your benchmark queries
 sh run.sh ../main.metta
 
-# Step 2: Run your native let-free formatter to output your structural results graph
-sh run.sh ../format_output.metta
+
 ```
 
 ## 📊 Sample Structural Output Layout
@@ -38,9 +37,5 @@ When running the pure MeTTa formatting module, the PeTTa framework safely parses
 
 ```text
 METTA-KNAPSACK-EVOLUTIONARY-RESULTS
-(Cons (Row (Case 1) (Weight 13) (Value 52) (Best-Chromosome (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 1 Nil)))))))
-(Cons (Row (Case 2) (Weight 26) (Value 104) (Best-Chromosome (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 1 Nil)))))))
-(Cons (Row (Case 3) (Weight 25) (Value 100) (Best-Chromosome (Cons 0 (Cons 1 (Cons 0 (Cons 1 (Cons 0 Nil)))))))
-...
-(Cons (Row (Case 20) (Weight 868) (Value 3298) (Best-Chromosome (Cons 1 (Cons 0 (Cons 1 (Cons 0 ... Nil)))))) Nil)))
-```
+METTA-KNAPSACK-EVOLUTIONARY-RESULTS (Cons (Row (Case 1) (Weight 12) (Value 30) (Best-Chromosome (Cons 0 (Cons 0 (Cons 1 (Cons 1 (Cons 1 Nil))))))) (Cons (Row (Case 2) (Weight 27) (Value 66) (Best-Chromosome (Cons 0 (Cons 0 (Cons 1 (Cons 1 (Cons 1 Nil))))))) (Cons (Row (Case 3) (Weight 19) (Value 96) (Best-Chromosome (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 1 Nil))))))) (Cons (Row (Case 4) (Weight 10) (Value 25) (Best-Chromosome (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 1 Nil))))))) (Cons (Row (Case 5) (Weight 33) (Value 128) (Best-Chromosome (Cons 0 (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 1 Nil)))))))))))) .........................................................................................................
+(Case 20) (Weight 899) (Value 14416) (Best-Chromosome (Cons 0 (Cons 0 (Cons 0 (Cons 1 (Cons 1 (Cons 0 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 0 (Cons 1 (Cons 0 (Cons 0 (Cons 1 (Cons 1 (Cons 1 (Cons 0 (Cons 0 (Cons 1 (Cons 1 (Cons 0 (Cons 0 (Cons 1 (Cons 1 (Cons 0 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 0 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 1 (Cons 1 Nil)))))))))))))))))))))))))))))))))))))))))))))))))))) Nil)))))))))))))))))))))

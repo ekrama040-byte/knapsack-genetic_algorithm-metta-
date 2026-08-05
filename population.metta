@@ -1,20 +1,27 @@
-;; ============================================================================
-;; POPULATION GENERATOR MODULE (Pure Deterministic Pseudo-Random LCG Layout)
-;; ============================================================================
+;; Linear Congruential Generator for non-backtracking random numbers
+(= (next-seed $seed)
+   (% (+ (* $seed 1103515245) 12345) 2147483648))
 
-;; Base Case
-(= (generate-stochastic-chromosome Nil $seed) Nil)
+!(random-float  &rng 1 2)
 
-;; Recursive Step: Inlines the LCG seed calculation directly into the next function call argument
-(= (generate-stochastic-chromosome (Cons $item $rest) $seed)
-   (construct-pop-bit (% (+ (* 1103515245 $seed) 12345) 65536) $rest))
+;; Turns the high seed value into a clean 0 or 1 gene
+(= (seed-to-gene $seed)
+   (% $seed 2))
 
-;; Helper: Eliminates the let block by accepting the computed next-seed directly as a parameter
-(= (construct-pop-bit $next-seed $rest)
-   (Cons (if (< (% $next-seed 100) 50) 1 0) (generate-stochastic-chromosome $rest $next-seed)))
+;; Generates a single chromosome deterministically without path splitting
+(= (generate-chromosome Nil $seed) 
+   (Cons-Result Nil $seed))
 
-;; ============================================================================
-;; PUBLIC INTERFACE FUNCTIONS
-;; ============================================================================
-(= (get-parent-one $items-list) (generate-stochastic-chromosome $items-list 12345))
-(= (get-parent-two $items-list) (generate-stochastic-chromosome $items-list 67890))
+(= (generate-chromosome (Cons $x $xs) $seed)
+   (build-chromosome-step (seed-to-gene $seed) (generate-chromosome $xs (next-seed $seed))))
+
+(= (build-chromosome-step $gene (Cons-Result $rest-chrom $final-seed))
+   (Cons-Result (Cons $gene $rest-chrom) $final-seed))
+
+;; Generates the full population array cleanly
+(= (generate-population $items 0 $seed) Nil)
+(= (generate-population $items $size $seed)
+   (build-population-step (generate-chromosome $items $seed) $items $size))
+
+(= (build-population-step (Cons-Result $chrom $next-seed) $items $size)
+   (Cons $chrom (generate-population $items (- $size 1) (next-seed $next-seed))))

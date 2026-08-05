@@ -1,26 +1,27 @@
 ;; ============================================================================
-;; GENERIC CROSSOVER MASK GENERATOR (Infinite Scale, Let-Free)
+;; CROSSOVER MODULE FOR PeTTa
+;; Performs deterministic single-point crossover using an LCG seed state
 ;; ============================================================================
 
-;; Generates a perfectly sized Cons mask dynamically based on runtime item length
-(= (generate-crossover-mask Nil $idx) Nil)
+;; 1. Standard LCG primitive (matching your population generator)
+(= (next-crossover-seed $seed)
+   (% (+ (* $seed 1103515245) 12345) 2147483648))
 
-;; FIXED: Inlined the alternating modulo math directly to completely eliminate let-blocks
-(= (generate-crossover-mask (Cons $x $xs) $idx)
-   (Cons (if (== (% $idx 2) 0) 1 0) (generate-crossover-mask $xs (+ $idx 1))))
+;; 2. Maps the seed value into a valid splitting index bounded by the chromosome length
+(= (seed-to-index $seed $length)
+   (+ 1 (% $seed (- $length 1))))
 
-;; ============================================================================
-;; DETERMINISTIC UNIFORM CROSSOVER OPERATOR (Strict Cons/Nil Alignment)
-;; ============================================================================
+;; 3. Core Splicing Engine (Your optimized structural recursion)
+(= (single-point-crossover Nil Nil $_) Nil)
+(= (single-point-crossover (Cons $p1 $r1) (Cons $p2 $r2) $idx)
+   (if (> $idx 0)
+       (Cons $p1 (single-point-crossover $r1 $r2 (- $idx 1)))
+       (Cons $p2 (single-point-crossover $r1 $r2 0))))
 
-;; Base Case: When the end of the parent strings is reached, return Nil
-(= (uniform-crossover Nil Nil Nil) 
-   Nil)
+;; 4. Orchestrator: Accepts parents, length, and seed; outputs child and next seed state
+(= (execute-crossover $parent1 $parent2 $length $seed)
+   (dispatch-crossover-step $parent1 $parent2 (seed-to-index $seed $length) (next-crossover-seed $seed)))
 
-;; Condition 1: Mask bit is 1 -> Inherit gene strictly from Parent 1 ($p1)
-(= (uniform-crossover (Cons $p1 $r1) (Cons $p2 $r2) (Cons 1 $m-rest))
-   (Cons $p1 (uniform-crossover $r1 $r2 $m-rest)))
-
-;; Condition 2: Mask bit is 0 -> Inherit gene strictly from Parent 2 ($p2)
-(= (uniform-crossover (Cons $p1 $r1) (Cons $p2 $r2) (Cons 0 $m-rest))
-   (Cons $p2 (uniform-crossover $r1 $r2 $m-rest)))
+;; 5. Step helper to package the new child alongside its mutated seed state
+(= (dispatch-crossover-step $parent1 $parent2 $idx $next-seed)
+   (Crossover-Result (single-point-crossover $parent1 $parent2 $idx) $next-seed))
